@@ -3,26 +3,22 @@ conftest.py – UserService
 Place this file at the ROOT of the user-service repo alongside users.py.
 
 What it does:
-  1. Adds the shared package to sys.path (same trick as the service files)
-  2. Swaps Azure SQL for SQLite in-memory (strips schema= from table args)
-  3. Provides a `client` fixture with DB + auth overrides
+  1. Swaps Azure SQL for SQLite in-memory (strips schema= from table args)
+  2. Provides a `client` fixture with DB + auth overrides
+
+volunteer-shared must be installed (via Azure Artifacts) before running tests,
+so database, models, auth etc. are importable as regular installed packages.
 """
-import sys
 import os
 
-# ── point to the shared repo (adjust relative path if needed) ────────────────
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'shared'))
-sys.path.insert(0, os.path.dirname(__file__))
-
-# ── patch database BEFORE any service module is imported ─────────────────────
 import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 SQLITE_URL = "sqlite:///./test.db"
 
-# Patch pyodbc / SQL Server connection so importing database.py doesn't crash
+# Patch env vars so database.py doesn't attempt a real SQL Server connection
 with patch.dict(os.environ, {
     "DB_USERNAME": "test", "DB_PASSWORD": "test",
     "DB_SERVER": "localhost", "DB_DATABASE": "test",

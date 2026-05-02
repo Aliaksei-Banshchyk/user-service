@@ -104,7 +104,9 @@ stages:
           - script: |
               python -m pip install --upgrade pip
               pip install -r requirements.txt
-              pip install pytest pytest-cov pytest-asyncio httpx aiosqlite
+              pip install pytest pytest-cov sqlalchemy \
+                          python-jose[cryptography] passlib \
+                          httpx pyodbc volunteer-shared
             displayName: "Install dependencies"
 
           - script: |
