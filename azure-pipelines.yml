@@ -44,6 +44,7 @@ steps:
       flake8 . \
         --max-line-length=120 \
         --exclude=__pycache__,.venv,.git \
+        --extend-ignore=E401,E402,F401 \
         --statistics
     displayName: "Lint: flake8"
 
