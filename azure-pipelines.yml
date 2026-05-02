@@ -1,6 +1,5 @@
 # ============================================================
-# Azure Pipelines – UserService  (multi-repo setup)
-# volunteer-shared is installed from Azure Artifacts
+# Azure Pipelines – UserService  (flat repo layout)
 # ============================================================
 
 trigger:
@@ -42,22 +41,23 @@ steps:
     displayName: "Install dependencies"
 
   - script: |
-      flake8 user_service/ main.py \
+      flake8 . \
         --max-line-length=120 \
-        --exclude=__pycache__,.venv \
+        --exclude=__pycache__,.venv,.git \
         --statistics
     displayName: "Lint: flake8"
 
   - script: |
-      mypy user_service/ \
+      mypy . \
         --ignore-missing-imports \
-        --no-strict-optional
+        --no-strict-optional \
+        --exclude __pycache__
     displayName: "Type check: mypy"
 
   - script: |
-      pytest user_service/tests/ \
+      pytest tests/ \
         --asyncio-mode=auto \
-        --cov=user_service \
+        --cov=. \
         --cov-report=xml:coverage.xml \
         --cov-report=term-missing \
         -v
